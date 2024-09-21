@@ -86,8 +86,10 @@
         <h1>NordVPN Control Panel</h1>
         
         <div class="card status">
-            <h3>Status: {{ status.connection_status }}</h3>
-            <p>Server: {{ status.current_server }}</p>
+            <h3>Status: {{ status.Status }}</h3>
+            <p v-for="(value, key) in status" :key="key">
+                <strong>{{ key }}:</strong> {{ value }}
+            </p>
         </div>
 
         <div class="card">
@@ -147,12 +149,21 @@
     </div>
 
     <script>
+        const API_BASE_URL = window.location.origin;
+
         new Vue({
             el: '#app',
             data: {
                 status: {
-                    connection_status: 'Unknown',
-                    current_server: 'Unknown'
+                    Status: 'Unknown',
+                    Country: 'Unknown',
+                    City: 'Unknown',
+                    Server: 'Unknown',
+                    IP: 'Unknown',
+                    Technology: 'Unknown',
+                    Protocol: 'Unknown',
+                    Transfer: 'Unknown',
+                    Uptime: 'Unknown'
                 },
                 countries: {
                     priority: [],
@@ -187,10 +198,8 @@
                 async refreshStatus() {
                     this.isLoading = true;
                     try {
-                        const response = await axios.get('http://localhost:8000/status');
-                        const statusLines = response.data.split('\n');
-                        this.status.connection_status = statusLines.find(line => line.startsWith('Status:'))?.split(': ')[1] || 'Unknown';
-                        this.status.current_server = statusLines.find(line => line.startsWith('Server:'))?.split(': ')[1] || 'Unknown';
+                        const response = await axios.get(`${API_BASE_URL}/status`);
+                        this.status = response.data;
                     } catch (error) {
                         console.error('Error refreshing status:', error);
                     } finally {
@@ -199,7 +208,7 @@
                 },
                 async getCountries() {
                     try {
-                        const response = await axios.get('http://localhost:8000/countries');
+                        const response = await axios.get(`${API_BASE_URL}/countries`);
                         this.countries = response.data;
                     } catch (error) {
                         console.error('Error getting countries:', error);
@@ -211,9 +220,9 @@
                         let url;
                         if (this.selectedConnection.startsWith('group:')) {
                             const group = this.selectedConnection.split(':')[1];
-                            url = `http://localhost:8000/connect/group/${group}`;
+                            url = `${API_BASE_URL}/connect/group/${group}`;
                         } else {
-                            url = `http://localhost:8000/connect/${this.selectedConnection}`;
+                            url = `${API_BASE_URL}/connect/${this.selectedConnection}`;
                         }
                         const response = await axios.post(url);
                         this.response = response.data;
@@ -227,7 +236,7 @@
                 async disconnect() {
                     this.isLoading = true;
                     try {
-                        const response = await axios.post('http://localhost:8000/disconnect');
+                        const response = await axios.post(`${API_BASE_URL}/disconnect`);
                         this.response = response.data;
                         await this.refreshStatus();
                     } catch (error) {
@@ -239,7 +248,7 @@
                 async runSpeedTest() {
                     this.isLoading = true;
                     try {
-                        const response = await axios.get('http://localhost:8000/speedtest');
+                        const response = await axios.get(`${API_BASE_URL}/speedtest`);
                         this.speedTestResults = response.data;
                     } catch (error) {
                         console.error('Error running speed test:', error);
@@ -249,7 +258,7 @@
                 },
                 async getTechnologies() {
                     try {
-                        const response = await axios.get('http://localhost:8000/technologies');
+                        const response = await axios.get(`${API_BASE_URL}/technologies`);
                         this.technologies = response.data;
                     } catch (error) {
                         console.error('Error getting technologies:', error);
@@ -257,7 +266,7 @@
                 },
                 async getProtocols() {
                     try {
-                        const response = await axios.get('http://localhost:8000/protocols');
+                        const response = await axios.get(`${API_BASE_URL}/protocols`);
                         this.protocols = response.data;
                     } catch (error) {
                         console.error('Error getting protocols:', error);
@@ -265,7 +274,7 @@
                 },
                 async getGroups() {
                     try {
-                        const response = await axios.get('http://localhost:8000/groups');
+                        const response = await axios.get(`${API_BASE_URL}/groups`);
                         this.groups = response.data;
                     } catch (error) {
                         console.error('Error getting groups:', error);
@@ -274,7 +283,7 @@
                 async applySetting() {
                     this.isLoading = true;
                     try {
-                        const response = await axios.post(`http://localhost:8000/set/${this.selectedSetting}/${this.settingValue}`);
+                        const response = await axios.post(`${API_BASE_URL}/set/${this.selectedSetting}/${this.settingValue}`);
                         this.response = response.data;
                     } catch (error) {
                         console.error('Error applying setting:', error);

@@ -6,9 +6,9 @@ name = "pypi"
 [packages]
 fastapi = "*"
 uvicorn = "*"
-streamlit = "*"
 requests = "*"
 speedtest-cli = "*"
+python-dotenv = "*"
 
 [dev-packages]
 

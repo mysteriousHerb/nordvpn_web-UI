@@ -1,3 +1,4 @@
+import os
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -5,11 +6,15 @@ from fastapi.staticfiles import StaticFiles
 import subprocess
 import speedtest  # Add this import
 import logging
+import dotenv
 
-
+dotenv.load_dotenv()
+# Get port from environment variable, default to 8000 if not set
+PORT = int(os.getenv('NORDVPN_UI_PORT', 8000))
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -34,8 +39,14 @@ def run_command(command):
 
 @app.get("/status")
 async def get_status():
-    status = run_command(["nordvpn", "status"])
-    return status
+    status_output = run_command(["nordvpn", "status"])
+    status_lines = status_output.split('\n')
+    status_dict = {}
+    for line in status_lines:
+        if ':' in line:
+            key, value = line.split(':', 1)
+            status_dict[key.strip()] = value.strip()
+    return status_dict
 
 @app.get("/countries")
 async def get_countries():
@@ -100,4 +111,4 @@ async def connect_group(group: str):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("api:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("api:app", host="0.0.0.0", port=PORT, reload=True)
