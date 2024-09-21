@@ -8,6 +8,7 @@ fastapi = "*"
 uvicorn = "*"
 streamlit = "*"
 requests = "*"
+speedtest-cli = "*"
 
 [dev-packages]
 

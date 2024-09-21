@@ -1,6 +1,10 @@
 import streamlit as st
 import requests
 import time
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 API_URL = "http://localhost:8000"
 
@@ -50,6 +54,15 @@ def refresh_status():
     connection_status = next((clean_status_line(line) for line in status_lines if line.startswith("Status:")), "Unknown")
     current_server = next((clean_status_line(line) for line in status_lines if line.startswith("Server:")), "Unknown")
     return status, connection_status, current_server
+
+
+def run_speedtest():
+    logger.info("Requesting speedtest from API")
+    response = requests.get(f"{API_URL}/speedtest")
+    logger.info(f"Received speedtest response: {response.text}")
+    return response.json()
+
+
 
 # Response display area
 response_area = st.empty()
@@ -106,23 +119,52 @@ with col2:
         response_area.success(f"Setting {selected_setting} updated")
         response_area.code(response.replace("\\n", "\n"))
 
-# Buttons for Connect, Disconnect, and Refresh
-col1, col2, col3 = st.columns(3)
+# Buttons for Connect, Disconnect, Refresh, and Speed Test
+col1, col2, col3, col4 = st.columns(4)
 with col1:
-    if st.button("Connect") and selected_country:
+    connect_button = st.empty()
+    if connect_button.button("Connect", key="connect_button", help="Connect to selected country") and selected_country:
         response = requests.post(f"{API_URL}/connect/{selected_country}")
         response_area.success(f"Connected to {selected_country}")
         response_area.code(response.text.replace("\\n", "\n"))
         status = update_status_display()
 with col2:
-    if st.button("Disconnect"):
+    disconnect_button = st.empty()
+    if disconnect_button.button("Disconnect", key="disconnect_button", help="Disconnect from VPN"):
         response = requests.post(f"{API_URL}/disconnect")
         response_area.success("Disconnected from NordVPN")
         response_area.code(response.text.replace("\\n", "\n"))
         status = update_status_display()
 with col3:
-    if st.button("Refresh Status"):
+    refresh_button = st.empty()
+    if refresh_button.button("Refresh Status", key="refresh_button", help="Refresh VPN status"):
         status = update_status_display()
+with col4:
+    speedtest_button = st.empty()
+    if speedtest_button.button("Run Speed Test", key="speedtest_button", help="Run a speed test"):
+        with st.spinner("Running speed test..."):
+            try:
+                logger.info("Starting speed test")
+                result = run_speedtest()
+                logger.info(f"Speed test completed: {result}")
+                response_area.success("Speed test completed!")
+                response_area.write(f"Download Speed: {result['download']} Mbps")
+                response_area.write(f"Upload Speed: {result['upload']} Mbps")
+                response_area.write(f"Ping: {result['ping']} ms")
+            except Exception as e:
+                logger.error(f"Speed test failed: {str(e)}")
+                response_area.error(f"Speed test failed: {str(e)}")
+
+# Apply custom styles to buttons
+st.markdown('<style>.connect-button button {width: 100%;}</style>', unsafe_allow_html=True)
+st.markdown('<style>.disconnect-button button {width: 100%;}</style>', unsafe_allow_html=True)
+st.markdown('<style>.refresh-button button {width: 100%;}</style>', unsafe_allow_html=True)
+st.markdown('<style>.speedtest-button button {width: 100%;}</style>', unsafe_allow_html=True)
+
+connect_button.markdown('<div class="connect-button">{}</div>'.format(connect_button.empty()), unsafe_allow_html=True)
+disconnect_button.markdown('<div class="disconnect-button">{}</div>'.format(disconnect_button.empty()), unsafe_allow_html=True)
+refresh_button.markdown('<div class="refresh-button">{}</div>'.format(refresh_button.empty()), unsafe_allow_html=True)
+speedtest_button.markdown('<div class="speedtest-button">{}</div>'.format(speedtest_button.empty()), unsafe_allow_html=True)
 
 # Detailed Status and Settings at the bottom
 st.subheader("Detailed Information")
