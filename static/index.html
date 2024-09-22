@@ -218,15 +218,22 @@
 
         <div class="settings">
             <h3>NordVPN Settings</h3>
-            <p v-for="(value, key) in settings" :key="key">
+            <div v-for="(value, key) in settings" :key="key">
                 <strong>{{ key }}:</strong>
                 <span v-if="typeof value === 'string'">{{ value }}</span>
-                <span v-else>
+                <span v-else-if="Array.isArray(value)">
                     <ul>
                         <li v-for="item in value" :key="item">{{ item }}</li>
                     </ul>
                 </span>
-            </p>
+                <span v-else-if="typeof value === 'object'">
+                    <ul>
+                        <li v-for="(subValue, subKey) in value" :key="subKey">
+                            {{ subKey }}: {{ subValue }}
+                        </li>
+                    </ul>
+                </span>
+            </div>
         </div>
     </div>
 
@@ -367,7 +374,8 @@
                 async getSettings() {
                     try {
                         const response = await axios.get(`${API_BASE_URL}/settings`);
-                        this.settings = response.data;
+                        this.settings = { ...response.data };
+                        console.log('Settings:', this.settings);
                     } catch (error) {
                         console.error('Error getting settings:', error);
                     }
