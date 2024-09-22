@@ -1,0 +1,48 @@
+nohup: ignoring input
+Starting FastAPI server...
+Loading .env environment variables...
+INFO:     Will watch for changes in these directories: ['/home/nordvpn_UI']
+INFO:     Uvicorn running on http://0.0.0.0:7777 (Press CTRL+C to quit)
+INFO:     Started reloader process [4511] using StatReload
+INFO:     Started server process [4534]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+Access the API Swagger UI at: http://localhost:7777/docs
+Access the Web UI at: http://localhost:7777/static/index.html
+INFO:     192.168.1.102:59608 - "GET /status HTTP/1.1" 200 OK
+INFO:     192.168.1.102:59620 - "GET /status HTTP/1.1" 200 OK
+INFO:     192.168.1.34:52630 - "GET /static/index.html HTTP/1.1" 304 Not Modified
+INFO:     192.168.1.34:52630 - "GET /status HTTP/1.1" 200 OK
+INFO:     192.168.1.34:52632 - "GET /countries HTTP/1.1" 200 OK
+INFO:     192.168.1.34:52644 - "GET /technologies HTTP/1.1" 200 OK
+INFO:     192.168.1.34:52660 - "GET /protocols HTTP/1.1" 200 OK
+INFO:     192.168.1.34:52672 - "GET /groups HTTP/1.1" 200 OK
+INFO:     192.168.1.34:52686 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     192.168.1.34:52686 - "POST /connect/Belgium HTTP/1.1" 200 OK
+INFO:     192.168.1.34:52686 - "GET /status HTTP/1.1" 200 OK
+INFO:     192.168.1.102:50254 - "GET /status HTTP/1.1" 200 OK
+INFO:     192.168.1.102:50264 - "GET /status HTTP/1.1" 200 OK
+INFO:     192.168.1.102:33520 - "GET /status HTTP/1.1" 200 OK
+INFO:     192.168.1.102:49058 - "GET /status HTTP/1.1" 200 OK
+INFO:     192.168.1.102:38956 - "GET /status HTTP/1.1" 200 OK
+INFO:     192.168.1.102:40770 - "GET /status HTTP/1.1" 200 OK
+INFO:     192.168.1.102:42628 - "GET /status HTTP/1.1" 200 OK
+INFO:     192.168.1.102:56346 - "GET /status HTTP/1.1" 200 OK
+INFO:     192.168.1.34:34780 - "GET /static/index.html HTTP/1.1" 304 Not Modified
+INFO:     192.168.1.34:34780 - "GET /status HTTP/1.1" 200 OK
+INFO:     192.168.1.34:34796 - "GET /countries HTTP/1.1" 200 OK
+INFO:     192.168.1.34:34808 - "GET /protocols HTTP/1.1" 200 OK
+INFO:     192.168.1.34:34824 - "GET /technologies HTTP/1.1" 200 OK
+INFO:     192.168.1.34:34830 - "GET /groups HTTP/1.1" 200 OK
+INFO:     192.168.1.34:45550 - "POST /set/obfuscate/ HTTP/1.1" 404 Not Found
+INFO:     192.168.1.34:45550 - "POST /set/obfuscate/enabled HTTP/1.1" 500 Internal Server Error
+INFO:     192.168.1.34:45550 - "GET /status HTTP/1.1" 200 OK
+INFO:     192.168.1.34:45550 - "GET /status HTTP/1.1" 200 OK
+INFO:     192.168.1.34:45550 - "POST /connect/United_Kingdom HTTP/1.1" 200 OK
+INFO:     192.168.1.34:45550 - "GET /status HTTP/1.1" 200 OK
+INFO:     192.168.1.34:51296 - "POST /set/obfuscate/enabled HTTP/1.1" 500 Internal Server Error
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [4534]
+INFO:     Stopping reloader process [4511]

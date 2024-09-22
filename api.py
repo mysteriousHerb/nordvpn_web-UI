@@ -74,7 +74,23 @@ async def set_setting(setting: str, value: str):
 
 @app.get("/settings")
 async def get_settings():
-    return run_command(["nordvpn", "settings"])
+    settings_output = run_command(["nordvpn", "settings"])
+    settings_lines = settings_output.split('\n')
+    settings_dict = {}
+    current_key = None
+    for line in settings_lines:
+        if ':' in line:
+            key, value = line.split(':', 1)
+            key = key.strip()
+            value = value.strip()
+            if value:
+                settings_dict[key] = value
+            else:
+                current_key = key
+                settings_dict[current_key] = []
+        elif current_key and line.strip():
+            settings_dict[current_key].append(line.strip())
+    return settings_dict
 
 @app.post("/disconnect")
 async def disconnect():

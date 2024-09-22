@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,26 +16,67 @@
             background-color: #f0f2f5;
             color: #333;
         }
+
         .container {
             max-width: 800px;
             margin: 0 auto;
             padding: 20px;
         }
-        h1, h3 {
+
+        h1,
+        h3 {
             color: #4a4a4a;
         }
-        .card {
+
+        .status,
+        .settings,
+        .control-panel {
             background-color: #fff;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             padding: 20px;
             margin-bottom: 20px;
         }
+
+        .status {
+            background-color: #e8f5e9;
+            border-left: 5px solid #4CAF50;
+        }
+
+        .settings {
+            background-color: #fff9c4;
+            border-left: 5px solid #fbc02d;
+        }
+
+        .control-panel {
+            background-color: #fff;
+            border-left: 5px solid #2196F3;
+        }
+
+        .status h3,
+        .settings h3,
+        .control-panel h3 {
+            margin-top: 0;
+            color: #4a4a4a;
+        }
+
+        .status p,
+        .settings p,
+        .control-panel p {
+            margin: 5px 0;
+        }
+
+        .settings ul {
+            margin: 5px 0;
+            padding-left: 20px;
+        }
+
         .button-row {
             display: flex;
             justify-content: space-between;
             margin-bottom: 20px;
         }
+
         button {
             padding: 10px 20px;
             font-size: 16px;
@@ -43,13 +85,38 @@
             border-radius: 4px;
             transition: background-color 0.3s, opacity 0.3s;
         }
-        .connect { background-color: #4CAF50; color: white; }
-        .disconnect { background-color: #f44336; color: white; }
-        .refresh { background-color: #ffeb3b; color: black; }
-        .speedtest { background-color: #2196F3; color: white; }
-        button:hover { opacity: 0.8; }
-        button:disabled { opacity: 0.5; cursor: not-allowed; }
-        select, input {
+
+        .connect {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .disconnect {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .refresh {
+            background-color: #ffeb3b;
+            color: black;
+        }
+
+        .speedtest {
+            background-color: #2196F3;
+            color: white;
+        }
+
+        button:hover {
+            opacity: 0.8;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        select,
+        input {
             width: 100%;
             padding: 10px;
             margin-bottom: 10px;
@@ -57,42 +124,44 @@
             border-radius: 4px;
             box-sizing: border-box;
         }
-        .status {
-            background-color: #e8f5e9;
-            border-left: 5px solid #4CAF50;
-            padding: 10px;
-            margin-bottom: 20px;
-        }
+
         .response {
             background-color: #e3f2fd;
             border-left: 5px solid #2196F3;
             padding: 10px;
             margin-bottom: 20px;
         }
+
         .spinner {
             display: inline-block;
             width: 20px;
             height: 20px;
-            border: 3px solid rgba(255,255,255,.3);
+            border: 3px solid rgba(255, 255, 255, .3);
             border-radius: 50%;
             border-top-color: #fff;
             animation: spin 1s ease-in-out infinite;
         }
-        @keyframes spin { to { transform: rotate(360deg); } }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
     </style>
 </head>
+
 <body>
     <div id="app" class="container">
         <h1>NordVPN Control Panel</h1>
-        
-        <div class="card status">
+
+        <div class="status">
             <h3>Status: {{ status.Status }}</h3>
             <p v-for="(value, key) in status" :key="key">
                 <strong>{{ key }}:</strong> {{ value }}
             </p>
         </div>
 
-        <div class="card">
+        <div class="control-panel">
             <div class="button-row">
                 <button @click="connect" class="connect" :disabled="!selectedConnection || isLoading">Connect</button>
                 <button @click="disconnect" class="disconnect" :disabled="isLoading">Disconnect</button>
@@ -103,48 +172,61 @@
                 </button>
             </div>
 
-            <div class="card">
-                <h3>Connect to Country or Group</h3>
-                <select v-model="selectedConnection" :disabled="isLoading">
-                    <option value="">Select a country or group</option>
-                    <optgroup label="Priority Countries">
-                        <option v-for="country in countries.priority" :value="country">{{ country }}</option>
-                    </optgroup>
-                    <optgroup label="Groups">
-                        <option v-for="group in groups" :value="'group:' + group">{{ group }}</option>
-                    </optgroup>
-                    <optgroup label="Other Countries">
-                        <option v-for="country in countries.other" :value="country">{{ country }}</option>
-                    </optgroup>
+            <h3>Connect to Country or Group</h3>
+            <select v-model="selectedConnection" :disabled="isLoading">
+                <option value="">Select a country or group</option>
+                <optgroup label="Priority Countries">
+                    <option v-for="country in countries.priority" :value="country">{{ country }}</option>
+                </optgroup>
+                <optgroup label="Groups">
+                    <option v-for="group in groups" :value="'group:' + group">{{ group }}</option>
+                </optgroup>
+                <optgroup label="Other Countries">
+                    <option v-for="country in countries.other" :value="country">{{ country }}</option>
+                </optgroup>
+            </select>
+
+            <h3>Change Settings</h3>
+            <select v-model="selectedSetting" :disabled="isLoading">
+                <option value="">Select a setting</option>
+                <option v-for="setting in settingOptions" :value="setting">{{ setting }}</option>
+            </select>
+            <div v-if="selectedSetting">
+                <select
+                    v-if="['technology', 'protocol', 'killswitch', 'autoconnect', 'lan', 'obfuscate'].includes(selectedSetting)"
+                    v-model="settingValue">
+                    <option v-for="option in settingValueOptions" :value="option">{{ option }}</option>
                 </select>
+                <input v-else-if="selectedSetting === 'dns'" v-model="settingValue"
+                    placeholder="Enter DNS server (e.g., 1.1.1.1)">
+                <button @click="applySetting" :disabled="isLoading" class="speedtest">Apply {{ selectedSetting
+                    }}</button>
             </div>
 
-            <div class="card">
-                <h3>Change Settings</h3>
-                <select v-model="selectedSetting" :disabled="isLoading">
-                    <option value="">Select a setting</option>
-                    <option v-for="setting in settingOptions" :value="setting">{{ setting }}</option>
-                </select>
-                <div v-if="selectedSetting">
-                    <select v-if="['technology', 'protocol', 'killswitch', 'autoconnect', 'lan', 'obfuscate'].includes(selectedSetting)" v-model="settingValue">
-                        <option v-for="option in settingValueOptions" :value="option">{{ option }}</option>
-                    </select>
-                    <input v-else-if="selectedSetting === 'dns'" v-model="settingValue" placeholder="Enter DNS server (e.g., 1.1.1.1)">
-                    <button @click="applySetting" :disabled="isLoading" class="speedtest">Apply {{ selectedSetting }}</button>
-                </div>
-            </div>
-
-            <div v-if="response" class="card response">
+            <div v-if="response" class="response">
                 <h3>Response:</h3>
                 <pre>{{ response }}</pre>
             </div>
 
-            <div v-if="speedTestResults" class="card response">
+            <div v-if="speedTestResults" class="response">
                 <h3>Speed Test Results:</h3>
                 <p>Download: {{ speedTestResults.download }} Mbps</p>
                 <p>Upload: {{ speedTestResults.upload }} Mbps</p>
                 <p>Ping: {{ speedTestResults.ping }} ms</p>
             </div>
+        </div>
+
+        <div class="settings">
+            <h3>NordVPN Settings</h3>
+            <p v-for="(value, key) in settings" :key="key">
+                <strong>{{ key }}:</strong>
+                <span v-if="typeof value === 'string'">{{ value }}</span>
+                <span v-else>
+                    <ul>
+                        <li v-for="item in value" :key="item">{{ item }}</li>
+                    </ul>
+                </span>
+            </p>
         </div>
     </div>
 
@@ -178,7 +260,8 @@
                 settingOptions: ['technology', 'protocol', 'killswitch', 'autoconnect', 'dns', 'lan', 'obfuscate'],
                 technologies: [],
                 protocols: [],
-                groups: []
+                groups: [],
+                settings: {}
             },
             computed: {
                 settingValueOptions() {
@@ -198,8 +281,9 @@
                 async refreshStatus() {
                     this.isLoading = true;
                     try {
-                        const response = await axios.get(`${API_BASE_URL}/status`);
-                        this.status = response.data;
+                        const statusResponse = await axios.get(`${API_BASE_URL}/status`);
+                        this.status = statusResponse.data;
+                        await this.getSettings();
                     } catch (error) {
                         console.error('Error refreshing status:', error);
                     } finally {
@@ -280,11 +364,20 @@
                         console.error('Error getting groups:', error);
                     }
                 },
+                async getSettings() {
+                    try {
+                        const response = await axios.get(`${API_BASE_URL}/settings`);
+                        this.settings = response.data;
+                    } catch (error) {
+                        console.error('Error getting settings:', error);
+                    }
+                },
                 async applySetting() {
                     this.isLoading = true;
                     try {
                         const response = await axios.post(`${API_BASE_URL}/set/${this.selectedSetting}/${this.settingValue}`);
                         this.response = response.data;
+                        await this.getSettings();
                     } catch (error) {
                         console.error('Error applying setting:', error);
                     } finally {
@@ -302,4 +395,5 @@
         });
     </script>
 </body>
+
 </html>

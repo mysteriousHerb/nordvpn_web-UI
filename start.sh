@@ -16,5 +16,5 @@ sleep 5
 echo "Access the API Swagger UI at: http://localhost:${NORDVPN_UI_PORT:-8000}/docs"
 echo "Access the Web UI at: http://localhost:${NORDVPN_UI_PORT:-8000}/static/index.html"
 
-# Keep the script running
-wait
+# # Keep the script running
+# wait
